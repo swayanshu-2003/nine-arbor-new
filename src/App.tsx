@@ -76,7 +76,7 @@ function App() {
             <br /> experiences, accommodation, workspaces, persnalised gifts and
             F&B, while saving up to 30%.
           </p>
-          <button className="flex items-center gap-2 bg-white text-black px-6 py-2 rounded-full mx-auto font-Outfit">
+          <button onClick={handleChat} className="flex items-center gap-2 bg-white text-black px-6 py-2 rounded-full mx-auto font-Outfit">
             <img src={WhatsappIcon} className="w-7" alt="" />
             Chat With Us
           </button>
