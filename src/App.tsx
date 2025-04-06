@@ -1,19 +1,20 @@
-import { MapPin, MessageSquare } from "lucide-react";
+import { MapPin } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import DeepSolv from "./assets/clients/deep-solv.png";
 import SIGN3 from "./assets/clients/sign3.png";
 import TruEstate from "./assets/clients/true-estate.png";
-import PlayIcon from "./assets/clients/play.png";
-import Group from "./assets/clients/group.png";
+import DeepSolvBg from "./assets/clients/deep-solv.webp";
+import SIGN3Bg from "./assets/clients/sign3.webp";
+import TruEstateBg from "./assets/clients/true-estate.webp";
 
 import { HiMapPin } from "react-icons/hi2";
 import WhatsappIcon from "./assets/misc/whatsapp-logo.png";
 
 function App() {
-  // const [emblaRef] = useEmblaCarousel({ loop: true });
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
+  const autoScrollInterval: any = useRef(null);
 
   const updateButtons = useCallback(() => {
     if (!emblaApi) return;
@@ -21,38 +22,76 @@ function App() {
     setCanScrollNext(emblaApi.canScrollNext());
   }, [emblaApi]);
 
+  const startAutoScroll = useCallback(() => {
+    if (!emblaApi) return;
+
+    // Clear any existing interval
+    if (autoScrollInterval.current) {
+      clearInterval(autoScrollInterval.current);
+    }
+
+    // Set new interval
+    autoScrollInterval.current = setInterval(() => {
+      if (emblaApi) {
+        emblaApi.scrollNext();
+      }
+    }, 2000); // Adjust timing as needed (3000ms = 3 seconds)
+  }, [emblaApi]);
+
+  const resetAutoScroll = useCallback(() => {
+    startAutoScroll();
+  }, [startAutoScroll]);
   useEffect(() => {
     if (!emblaApi) return;
+
+    const handlePointerDown = () => {
+      if (autoScrollInterval.current) {
+        clearInterval(autoScrollInterval.current);
+      }
+    };
+
     emblaApi.on("select", updateButtons);
+    emblaApi.on("pointerDown", handlePointerDown);
+
     updateButtons();
-  }, [emblaApi, updateButtons]);
+    startAutoScroll();
+
+    return () => {
+      if (autoScrollInterval.current) {
+        clearInterval(autoScrollInterval.current);
+      }
+      emblaApi.off("select", updateButtons);
+      emblaApi.off("pointerDown", handlePointerDown);
+    };
+  }, [emblaApi, updateButtons, startAutoScroll]);
 
   return (
     <div className="w-full bg-black">
       <div className="min-h-screen bg-black mx-auto text-white max-w-7xl">
         {/* Header */}
         <header className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <h1 className="text-2xl font-bold font-Archivo">Nine Arbor</h1>
+          <h1 className="text-2xl font-bold font-Archivo">Unwind</h1>
           <button className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full font-Outfit">
-            <MessageSquare size={20} />
+            <img src={WhatsappIcon} className="w-7" alt="" />
             Chat With Us
           </button>
         </header>
 
         {/* Hero Section */}
         <section className="container mx-auto px-4 py-20 text-center">
-          <h2 className="text-6xl font-bold mb-6 font-Archivo">
+          <h2 className="text-8xl font-bold mb-6 font-Archivo">
             Craft Memorable
             <br />
             Corporate Experiences!
           </h2>
-          <p className="text-gray-400 max-w-3xl mx-auto mb-8 font-Outfit">
+          <p className="text-gray-400 max-w-5xl mx-auto mb-8 font-Outfit text-xl">
             Your one-stop solution for corporate offsites, retreats, and
-            meetings—offering transport, experiences, accommodation, workspaces,
-            personalized gifts and F&B, while saving up to 30%.
+            meetings—offering transport,
+            <br /> experiences, accommodation, workspaces, persnalised gifts and
+            F&B, while saving up to 30%.
           </p>
-          <button className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full mx-auto font-Outfit">
-            <MessageSquare size={20} />
+          <button className="flex items-center gap-2 bg-white text-black px-6 py-2 rounded-full mx-auto font-Outfit">
+            <img src={WhatsappIcon} className="w-7" alt="" />
             Chat With Us
           </button>
         </section>
@@ -60,19 +99,16 @@ function App() {
         {/* Client Gallery */}
         <section className="container mx-auto px-4 py-12 font-Outfit">
           <div className="grid grid-cols-12 gap-4">
-            {/* Large left image */}
             <div className="col-span-12 md:col-span-3 relative h-[500px] rounded-2xl overflow-hidden">
               <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-              <img
-                src={Group}
-                alt="Corporate Team"
+              <video
+                src="./video.webm" // Replace with the actual path to your video
                 className="w-full h-full object-cover"
+                autoPlay
+                loop
+                muted
+                playsInline
               />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-black/40  p-4 rounded-2xl cursor-pointer">
-                  <img src={PlayIcon} alt="" className="w-8 h-9" />
-                </div>
-              </div>
             </div>
 
             {/* Right column with 3 images */}
@@ -80,7 +116,7 @@ function App() {
               <div className="relative h-[245px] rounded-2xl overflow-hidden ">
                 <div className="absolute inset-0 bg-black bg-opacity-40"></div>
                 <img
-                  src="https://images.unsplash.com/photo-1517048676732-d65bc937f952"
+                  src={TruEstateBg}
                   alt="TruEstate Team"
                   className="w-full h-full object-cover"
                 />
@@ -96,7 +132,7 @@ function App() {
                 <div className="relative h-[245px] rounded-2xl overflow-hidden">
                   <div className="absolute inset-0 bg-black bg-opacity-40"></div>
                   <img
-                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c"
+                    src={DeepSolvBg}
                     alt="deepsolv Team"
                     className="w-full h-full object-cover"
                   />
@@ -111,7 +147,7 @@ function App() {
                 <div className="relative h-[245px] rounded-2xl overflow-hidden">
                   <div className="absolute inset-0 bg-black bg-opacity-40"></div>
                   <img
-                    src="https://images.unsplash.com/photo-1517048676732-d65bc937f952"
+                    src={SIGN3Bg}
                     alt="SIGN3 Team"
                     className="w-full h-full object-cover"
                   />
@@ -175,8 +211,8 @@ function App() {
                         alt={exp.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
-                        <h3 className="text-xl font-bold mb-2 font-Archivo">
+                      <div className="absolute bottom-0 left-0 text-center right-0 bg-gradient-to-t from-black/90 to-transparent px-6">
+                        <h3 className="text-2xl  font-bold mb-2 font-Archivo">
                           {exp.title}
                         </h3>
                       </div>
@@ -188,7 +224,10 @@ function App() {
 
             {/* Left Arrow Button */}
             <button
-              onClick={() => emblaApi && emblaApi.scrollPrev()}
+              onClick={() => {
+                emblaApi && emblaApi.scrollPrev();
+                resetAutoScroll();
+              }}
               className={`absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full transition-opacity ${
                 canScrollPrev ? "opacity-100" : "opacity-50"
               }`}
@@ -199,7 +238,10 @@ function App() {
 
             {/* Right Arrow Button */}
             <button
-              onClick={() => emblaApi && emblaApi.scrollNext()}
+              onClick={() => {
+                emblaApi && emblaApi.scrollNext();
+                resetAutoScroll();
+              }}
               className={`absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full transition-opacity ${
                 canScrollNext ? "opacity-100" : "opacity-50"
               }`}
@@ -217,11 +259,9 @@ function App() {
         </div>
 
         {/* Footer */}
-        <footer className="container mx-auto px-4 py-8 mt-20 text-center">
-          <p className="text-gray-400 mb-8">
-            © ALL RIGHTS RESERVED, NINE ARBOR
-          </p>
-          <h2 className="text-4xl font-bold">Nine Arbor</h2>
+        <footer className="container mx-auto px-4 py-8 mt-20 text-center overflow-hidden relative">
+          <p className="text-gray-400">© ALL RIGHTS RESERVED, UNWIND</p>
+          <h2 className="text-9xl font-bold mt- relative top-20">Unwind</h2>
         </footer>
       </div>
     </div>
@@ -232,49 +272,51 @@ const features = [
   {
     title: "All-In-One Solution",
     description:
-      "Find Everything You Need In One Place—Accommodation, F&B, Activities, And Transportation.",
+      "Find everything you need in one place—accommodation, F&B, activities, and transportation.",
   },
   {
     title: "Budget & Cost Optimization",
     description:
-      "Benefit From Expert Guidance, Unbeatable Group Rates, Exclusive Offers, That Can Save You Up To 30%.",
+      "Benefit from expert guidance, unbeatable group rates, exclusive offers, that can save you up to 30%.",
   },
   {
     title: "Flexible Payment & Transparency",
     description:
-      "Enjoy Transparent Pricing For All The Line Items & Customizable Payment Plans.",
+      "Enjoy Transparent pricing for all the line items & customizable payment plans.",
   },
   {
     title: "Tailored Packages",
     description:
-      "Experience Fully Customized Itineraries—From Luxury Resorts To Offbeat Destinations—Designed To Fit Your Exact Needs.",
+      "Experience fully customized itineraries—from luxury resorts to offbeat destinations—designed to fit your exact needs.",
   },
   {
     title: "Hassle-Free Planning",
     description:
-      "We Manage Every Detail, From Vendor Coordination To Client Liaison, Ensuring You Enjoy A Completely Stress-Free Retreat.",
+      "We manage every detail, from vendor coordination to client liaison, ensuring you enjoy a completely stress-free retreat.",
   },
   {
     title: "Curated Venue Selection",
     description:
-      "Quickly Discover Ideal Locations With Our Personalized Venue Recommendations.",
+      "Quickly discover ideal locations with our personalized venue recommendations.",
   },
 ];
 
-import PlayArena from "./assets/clients/play-arena.png";
-import Wonderla from "./assets/clients/wonderla.png";
-import Bannerghatta from "./assets/clients/bannerghatta.png";
-import NandiTrek from "./assets/clients/nandi-trek.png";
-import Camping from "./assets/clients/camping.png";
-import Movie from "./assets/clients/movie.png";
-import CocktailsGames from "./assets/clients/cocktails.png";
-import PokerNight from "./assets/clients/poker-night.png";
-import TeamOlympics from "./assets/clients/team-olympics.png";
-import PrivateMusicPerformance from "./assets/clients/music.png";
-import MichelinStar from "./assets/clients/michelin-star.png";
-import BarbecueBonfire from "./assets/clients/barbecue-bonfire.png";
-import SilentDJ from "./assets/clients/silent-DJ.png";
-import { useCallback, useEffect, useState } from "react";
+import PlayArena from "./assets/experiences/play-arena.webp";
+import Wonderla from "./assets/experiences/wonderla.webp";
+import Bannerghatta from "./assets/experiences/bannerghatta.webp";
+import NandiTrek from "./assets/experiences/nandi-trek.webp";
+import Camping from "./assets/experiences/camping.webp";
+import Movie from "./assets/experiences/movie.webp";
+import CocktailsGames from "./assets/experiences/cocktails.webp";
+import PokerNight from "./assets/experiences/pocker-night.webp";
+import TeamOlympics from "./assets/experiences/team-olympics.webp";
+import PrivateMusicPerformance from "./assets/experiences/music.webp";
+import MichelinStar1 from "./assets/experiences/michelin-star.webp";
+import MichelinStar2 from "./assets/experiences/michelin-star2.webp";
+import BarbecueBonfire from "./assets/experiences/barbecue-bonfire.webp";
+import SilentDJ from "./assets/experiences/silent-DJ.webp";
+import GoKarting from "./assets/experiences/go-karting.webp";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const experiences = [
@@ -310,6 +352,16 @@ const experiences = [
     image: Movie,
   },
   {
+    title: "Private Music Performance",
+    activities: "10+",
+    image: PrivateMusicPerformance,
+  },
+  {
+    title: "Michelin star private chef experience",
+    activities: "10+",
+    image: MichelinStar1,
+  },
+  {
     title: "Cocktails & Games",
     activities: "10+",
     image: CocktailsGames,
@@ -325,14 +377,9 @@ const experiences = [
     image: TeamOlympics,
   },
   {
-    title: "Private Music Performance",
-    activities: "10+",
-    image: PrivateMusicPerformance,
-  },
-  {
     title: "Michelin star private chef experience",
     activities: "10+",
-    image: MichelinStar,
+    image: MichelinStar2,
   },
   {
     title: "Barbecue & Bonfire",
@@ -343,6 +390,11 @@ const experiences = [
     title: "Silent DJ",
     activities: "10+",
     image: SilentDJ,
+  },
+  {
+    title: "Go Karting",
+    activities: "10+",
+    image: GoKarting,
   },
 ];
 
