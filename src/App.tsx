@@ -1,5 +1,5 @@
 import { MapPin } from "lucide-react";
-import useEmblaCarousel from "embla-carousel-react";
+
 import DeepSolv from "./assets/clients/deep-solv.png";
 import SIGN3 from "./assets/clients/sign3.png";
 import TruEstate from "./assets/clients/true-estate.png";
@@ -11,60 +11,39 @@ import { HiMapPin } from "react-icons/hi2";
 import WhatsappIcon from "./assets/misc/whatsapp-logo.png";
 
 function App() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
-  const [canScrollPrev, setCanScrollPrev] = useState(false);
-  const [canScrollNext, setCanScrollNext] = useState(false);
-  const autoScrollInterval: any = useRef(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const animationRef = useRef<number>();
+  const speedRef = useRef<number>(2); // Increased speed from 0.5 to 2
 
-  const updateButtons = useCallback(() => {
-    if (!emblaApi) return;
-    setCanScrollPrev(emblaApi.canScrollPrev());
-    setCanScrollNext(emblaApi.canScrollNext());
-  }, [emblaApi]);
+  // Clone items for seamless loop
+  const items = [...experiences, ...experiences, ...experiences];
 
-  const startAutoScroll = useCallback(() => {
-    if (!emblaApi) return;
+  const scroll = useCallback(() => {
+    if (!scrollRef.current || isPaused) return;
 
-    // Clear any existing interval
-    if (autoScrollInterval.current) {
-      clearInterval(autoScrollInterval.current);
+    const container = scrollRef.current;
+    container.scrollLeft += speedRef.current;
+
+    // Reset scroll position when reaching the second set of items
+    if (container.scrollLeft >= container.scrollWidth / 3) {
+      container.scrollLeft = 0;
     }
 
-    // Set new interval
-    autoScrollInterval.current = setInterval(() => {
-      if (emblaApi) {
-        emblaApi.scrollNext();
-      }
-    }, 2000); // Adjust timing as needed (3000ms = 3 seconds)
-  }, [emblaApi]);
+    animationRef.current = requestAnimationFrame(scroll);
+  }, [isPaused]);
 
-  const resetAutoScroll = useCallback(() => {
-    startAutoScroll();
-  }, [startAutoScroll]);
   useEffect(() => {
-    if (!emblaApi) return;
-
-    const handlePointerDown = () => {
-      if (autoScrollInterval.current) {
-        clearInterval(autoScrollInterval.current);
-      }
-    };
-
-    emblaApi.on("select", updateButtons);
-    emblaApi.on("pointerDown", handlePointerDown);
-
-    updateButtons();
-    startAutoScroll();
-
+    scroll(); // Start the animation immediately
     return () => {
-      if (autoScrollInterval.current) {
-        clearInterval(autoScrollInterval.current);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
       }
-      emblaApi.off("select", updateButtons);
-      emblaApi.off("pointerDown", handlePointerDown);
     };
-  }, [emblaApi, updateButtons, startAutoScroll]);
+  }, [scroll]);
 
+  const handleMouseEnter = () => setIsPaused(true);
+  const handleMouseLeave = () => setIsPaused(false);
   return (
     <div className="w-full bg-black">
       <div className="min-h-screen bg-black mx-auto text-white max-w-7xl">
@@ -197,13 +176,26 @@ function App() {
           <h2 className="text-5xl font-bold mb-16 text-center font-Archivo">
             Handpicked experiences
           </h2>
-          <div className="relative">
-            <div className="overflow-hidden" ref={emblaRef}>
-              <div className="flex">
-                {experiences.map((exp, index) => (
+          <div
+            className="relative max-w-[1400px] mx-auto overflow-hidden"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <div
+              className="overflow-x-auto"
+              ref={scrollRef}
+              style={{
+                scrollBehavior: "auto",
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                WebkitOverflowScrolling: "touch",
+              }}
+            >
+              <div className="flex whitespace-nowrap">
+                {items.map((exp, index) => (
                   <div
                     key={index}
-                    className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] lg:flex-[0_0_25%] px-2"
+                    className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] lg:flex-[0_0_25%] px-2 inline-block"
                   >
                     <div className="relative h-96 rounded-2xl overflow-hidden group">
                       <img
@@ -211,8 +203,8 @@ function App() {
                         alt={exp.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div className="absolute bottom-0 left-0 text-center right-0 bg-gradient-to-t from-black/90 to-transparent px-6">
-                        <h3 className="text-2xl  font-bold mb-2 font-Archivo">
+                      <div className="absolute text-center bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6 max-w-full text-wrap">
+                        <h3 className="text-xl font-bold mb-2 text-white">
                           {exp.title}
                         </h3>
                       </div>
@@ -221,34 +213,6 @@ function App() {
                 ))}
               </div>
             </div>
-
-            {/* Left Arrow Button */}
-            <button
-              onClick={() => {
-                emblaApi && emblaApi.scrollPrev();
-                resetAutoScroll();
-              }}
-              className={`absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full transition-opacity ${
-                canScrollPrev ? "opacity-100" : "opacity-50"
-              }`}
-              disabled={!canScrollPrev}
-            >
-              <FaChevronLeft size={24} />
-            </button>
-
-            {/* Right Arrow Button */}
-            <button
-              onClick={() => {
-                emblaApi && emblaApi.scrollNext();
-                resetAutoScroll();
-              }}
-              className={`absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full transition-opacity ${
-                canScrollNext ? "opacity-100" : "opacity-50"
-              }`}
-              disabled={!canScrollNext}
-            >
-              <FaChevronRight size={24} />
-            </button>
           </div>
         </section>
         <div className="w-full flex items-center justify-center">
@@ -259,9 +223,11 @@ function App() {
         </div>
 
         {/* Footer */}
-        <footer className="container mx-auto px-4 py-8 mt-20 text-center overflow-hidden relative">
+        <footer className="container mx-auto px-4 py-8 mt-20  text-center overflow-hidden relative">
           <p className="text-gray-400">© ALL RIGHTS RESERVED, UNWIND</p>
-          <h2 className="text-9xl font-bold mt- relative top-20">Unwind</h2>
+          <h2 className="text-[300px] font-bold -mt-52 relative top-[235px]">
+            Unwind
+          </h2>
         </footer>
       </div>
     </div>
@@ -317,7 +283,6 @@ import BarbecueBonfire from "./assets/experiences/barbecue-bonfire.webp";
 import SilentDJ from "./assets/experiences/silent-DJ.webp";
 import GoKarting from "./assets/experiences/go-karting.webp";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const experiences = [
   {
