@@ -44,13 +44,20 @@ function App() {
 
   const handleMouseEnter = () => setIsPaused(true);
   const handleMouseLeave = () => setIsPaused(false);
+
+  const handleChat = () => {
+    window.open("http://wa.me/7007828937 ", "_blank");
+  };
   return (
     <div className="w-full bg-black">
       <div className="min-h-screen bg-black mx-auto text-white max-w-7xl">
         {/* Header */}
         <header className="container mx-auto px-4 py-6 flex justify-between items-center">
           <h1 className="text-2xl font-bold font-Archivo">Unwind</h1>
-          <button className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full font-Outfit">
+          <button
+            onClick={handleChat}
+            className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full font-Outfit"
+          >
             <img src={WhatsappIcon} className="w-7" alt="" />
             Chat With Us
           </button>
@@ -166,7 +173,10 @@ function App() {
           </div>
         </section>
         <div className="w-full flex items-center justify-center">
-          <button className="rounded-full min-w-20 bg-white font-Archivo px-4 py-2 flex items-center gap-2 text-black">
+          <button
+            onClick={handleChat}
+            className="rounded-full min-w-20 bg-white font-Archivo px-4 py-2 flex items-center gap-2 text-black"
+          >
             <img src={WhatsappIcon} className="w-7" alt="" />
             Chat With Us
           </button>
@@ -216,7 +226,10 @@ function App() {
           </div>
         </section>
         <div className="w-full flex items-center justify-center">
-          <button className="rounded-full min-w-20 bg-white font-Archivo px-4 py-2 flex items-center gap-2 text-black">
+          <button
+            onClick={handleChat}
+            className="rounded-full min-w-20 bg-white font-Archivo px-4 py-2 flex items-center gap-2 text-black"
+          >
             <img src={WhatsappIcon} className="w-7" alt="" />
             Chat With Us
           </button>
