@@ -76,7 +76,10 @@ function App() {
             <br /> experiences, accommodation, workspaces, persnalised gifts and
             F&B, while saving up to 30%.
           </p>
-          <button onClick={handleChat} className="flex items-center gap-2 bg-white text-black px-6 py-2 rounded-full mx-auto font-Outfit">
+          <button
+            onClick={handleChat}
+            className="flex items-center gap-2 bg-white text-black px-6 py-2 rounded-full mx-auto font-Outfit"
+          >
             <img src={WhatsappIcon} className="w-7" alt="" />
             Chat With Us
           </button>
@@ -158,8 +161,8 @@ function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <div key={index} className="bg-zinc-900 p-6 rounded-2xl">
-                <div className="bg-[#1F1F1F] p-2 rounded-md w-fit mb-4">
-                  <HiMapPin className="" size={25} />
+                <div className="bg-[#1F1F1F] flex items-center justify-center rounded-md  mb-4 w-11 h-11">
+                  <img src={feature?.icon} alt="" className="w-7 " />
                 </div>
 
                 <h3 className="text-xl font-bold mb-3 font-Archivo">
@@ -237,8 +240,21 @@ function App() {
 
         {/* Footer */}
         <footer className="container mx-auto px-4 py-8 mt-20  text-center overflow-hidden relative">
+          <div className="w-full grid grid-cols-2 items-center justify-between">
+            <div className="flex flex-col items-start gap-1">
+              <p className="font-Archivo font-medium text-lg">CALL US</p>
+              <p className="font-Outfit text-base">+91 70078 28937</p>
+            </div>
+            <div className="flex flex-col items-end gap-1">
+              <p className="font-Archivo font-medium text-lg">ADDRESS</p>
+              <p className="font-Outfit uppercase font-light text-base">
+                HSR Layout, Bengaluru, Karnataka 560102
+              </p>
+            </div>
+          </div>
+          <div className="bg-[#5F5E5E] h-[1px] my-3"></div>
           <p className="text-gray-400">© ALL RIGHTS RESERVED, UNWIND</p>
-          <h2 className="text-[300px] font-bold -mt-52 relative top-[235px]">
+          <h2 className="text-[320px] font-extrabold -mt-72 relative top-[240px] font-Archivo">
             Unwind
           </h2>
         </footer>
@@ -246,39 +262,6 @@ function App() {
     </div>
   );
 }
-
-const features = [
-  {
-    title: "All-In-One Solution",
-    description:
-      "Find everything you need in one place—accommodation, F&B, activities, and transportation.",
-  },
-  {
-    title: "Budget & Cost Optimization",
-    description:
-      "Benefit from expert guidance, unbeatable group rates, exclusive offers, that can save you up to 30%.",
-  },
-  {
-    title: "Flexible Payment & Transparency",
-    description:
-      "Enjoy Transparent pricing for all the line items & customizable payment plans.",
-  },
-  {
-    title: "Tailored Packages",
-    description:
-      "Experience fully customized itineraries—from luxury resorts to offbeat destinations—designed to fit your exact needs.",
-  },
-  {
-    title: "Hassle-Free Planning",
-    description:
-      "We manage every detail, from vendor coordination to client liaison, ensuring you enjoy a completely stress-free retreat.",
-  },
-  {
-    title: "Curated Venue Selection",
-    description:
-      "Quickly discover ideal locations with our personalized venue recommendations.",
-  },
-];
 
 import PlayArena from "./assets/experiences/play-arena.webp";
 import Wonderla from "./assets/experiences/wonderla.webp";
@@ -296,6 +279,51 @@ import BarbecueBonfire from "./assets/experiences/barbecue-bonfire.webp";
 import SilentDJ from "./assets/experiences/silent-DJ.webp";
 import GoKarting from "./assets/experiences/go-karting.webp";
 import { useCallback, useEffect, useRef, useState } from "react";
+import Icon1 from "./assets/why-us/1.svg";
+import Icon2 from "./assets/why-us/2.svg";
+import Icon3 from "./assets/why-us/3.svg";
+import Icon4 from "./assets/why-us/4.svg";
+import Icon5 from "./assets/why-us/5.svg";
+import Icon6 from "./assets/why-us/6.svg";
+
+const features = [
+  {
+    title: "All-In-One Solution",
+    description:
+      "Find everything you need in one place—accommodation, F&B, activities, and transportation.",
+    icon: Icon1,
+  },
+  {
+    title: "Budget & Cost Optimization",
+    description:
+      "Benefit from expert guidance, unbeatable group rates, exclusive offers, that can save you up to 30%.",
+    icon: Icon2,
+  },
+  {
+    title: "Flexible Payment & Transparency",
+    description:
+      "Enjoy Transparent pricing for all the line items & customizable payment plans.",
+    icon: Icon3,
+  },
+  {
+    title: "Tailored Packages",
+    description:
+      "Experience fully customized itineraries—from luxury resorts to offbeat destinations—designed to fit your exact needs.",
+    icon: Icon4,
+  },
+  {
+    title: "Hassle-Free Planning",
+    description:
+      "We manage every detail, from vendor coordination to client liaison, ensuring you enjoy a completely stress-free retreat.",
+    icon: Icon5,
+  },
+  {
+    title: "Curated Venue Selection",
+    description:
+      "Quickly discover ideal locations with our personalized venue recommendations.",
+    icon: Icon6,
+  },
+];
 
 const experiences = [
   {
